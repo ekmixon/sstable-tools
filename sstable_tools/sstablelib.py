@@ -28,9 +28,12 @@ class Stream:
 
     def read(self, typ):
         try:
-            (val,) = struct.unpack_from('>{}'.format(typ), self.data, self.offset)
+            (val,) = struct.unpack_from(f'>{typ}', self.data, self.offset)
         except Exception as e:
-            raise ValueError('Failed to read type `{}\' from stream at offset {}: {}'.format(typ, e, self.offset))
+            raise ValueError(
+                f"Failed to read type `{typ}\' from stream at offset {e}: {self.offset}"
+            )
+
         self.offset += self.size[typ]
         return val
 
@@ -104,7 +107,7 @@ class Stream:
                 self.skip(size)
         return value
     def enum32(self, *values):
-        d = {v: n for v, n in values}
+        d = dict(values)
         return d[self.uint32()]
 
     @staticmethod
